@@ -39,13 +39,76 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LogInScreen(navController: NavHostController) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text("Book Watcher - Log In")
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("Log in screen")
+            Button(onClick = { navController.navigate("MainMenu") }) {
+                Text("Log in")
+            }
+            Button(onClick = { navController.navigate("signupScreen") }) {
+                Text("Sign up")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SignUpScreen(navController: NavHostController) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text("Book Watcher - Sign Up")
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("Sign up screen")
+            Button(onClick = { navController.navigate("loginScreen") }) {
+                Text("Submit")
+            }
+        }
+    }
+}
+
 @Composable
 fun MenuScreen() {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = "MainMenu"
+        startDestination = "loginScreen"
     ) {
         composable("MainMenu") {
             Menu(navController)
@@ -61,6 +124,12 @@ fun MenuScreen() {
         }
         composable("deleteEntry") {
             DeleteEntry(navController)
+        }
+        composable("loginScreen") {
+            LogInScreen(navController)
+        }
+        composable("signupScreen") {
+            SignUpScreen(navController)
         }
     }
 }
@@ -98,6 +167,9 @@ fun Menu(navController: NavHostController) {
             }
             Button(onClick = { navController.navigate("deleteEntry") }) {
                 Text("Delete Entry")
+            }
+            Button(onClick = { navController.navigate("loginScreen") }) {
+                Text("Log out")
             }
         }
     }
