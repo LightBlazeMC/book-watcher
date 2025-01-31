@@ -13,6 +13,8 @@ composeBom = "2025.01.00"
 materialIconsExtended = "1.7.6"
 annotations = "23.0.0"
 constraintlayoutVersion = "2.2.0"
+navigationRuntimeKtx = "2.8.5"
+navigationCompose = "2.8.5"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -35,6 +37,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayoutVersion" }
 androidx-navigation-compose = { group = "androidx.compose.material3", name = "material3" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
