@@ -22,46 +22,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.chirex.bookwatcher.ui.theme.BookWatcherTheme
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BookWatcherTheme {
-        MenuScreen()
-    }
-}
-
-@Composable
-fun MenuScreen() {
-    val navController = rememberNavController()
-
-    NavHost(
-        navController = navController,
-        startDestination = "loginScreen"
-    ) {
-        composable("MainMenu") {
-            Menu(navController)
-        }
-        composable("addEntry") {
-            AddEntry(navController)
-        }
-        composable("viewEntries") {
-            ViewEntries(navController)
-        }
-        composable("editEntry") {
-            EditEntry(navController)
-        }
-        composable("deleteEntry") {
-            DeleteEntry(navController)
-        }
-        composable("loginScreen") {
-            LogInScreen(navController)
-        }
-        composable("signupScreen") {
-            SignUpScreen(navController)
-        }
-    }
-}
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MenuScreen()
+                    Navigation()
                 }
             }
         }
