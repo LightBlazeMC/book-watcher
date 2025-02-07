@@ -59,6 +59,9 @@ fun LogInScreen(navController: NavHostController) {
     fun isValidCredentials() {
         usernameError = !isValidUsername(username)
         passwordError = !isValidPassword(password)
+        if (!usernameError && !passwordError) {
+            navController.navigate("MainMenu")
+        }
     }
 
     Scaffold(
