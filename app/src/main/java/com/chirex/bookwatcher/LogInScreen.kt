@@ -42,7 +42,7 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogInScreen(navController: NavHostController) {
+fun LogInScreen(navController: NavHostController, onLoginSuccess: (String) -> Unit) {
     var username by remember { mutableStateOf("") }
     var usernameError by remember { mutableStateOf(false) }
 
@@ -62,7 +62,7 @@ fun LogInScreen(navController: NavHostController) {
         usernameError = !isValidUsername(username)
         passwordError = !isValidPassword(password)
         if (!usernameError && !passwordError) {
-            navController.navigate("MainMenu")
+            onLoginSuccess(username)
         }
     }
 

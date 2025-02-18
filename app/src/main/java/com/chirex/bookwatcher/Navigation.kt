@@ -10,13 +10,14 @@ fun Navigation() {
     val navController = rememberNavController()
     val entries = remember { mutableStateListOf<BookEntry>() }
     var selectedEntryIndex by remember { mutableStateOf(-1) }
+    var username by remember { mutableStateOf("User") }
 
     NavHost(
         navController = navController,
         startDestination = Screens.LogInScreenScreen.route
     ) {
         composable(Screens.MenuScreen.route) {
-            Menu(navController)
+            Menu(navController, username)
         }
         composable(Screens.AddEntryScreen.route) {
             AddEntry(navController, entries)
@@ -34,7 +35,10 @@ fun Navigation() {
             DeleteEntry(navController)
         }
         composable(Screens.LogInScreenScreen.route) {
-            LogInScreen(navController)
+            LogInScreen(navController) { enteredUsername ->
+                username = enteredUsername
+                navController.navigate(Screens.MenuScreen.route)
+            }
         }
         composable(Screens.SignUpScreenScreen.route) {
             SignUpScreen(navController)
