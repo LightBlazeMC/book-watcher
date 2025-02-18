@@ -1,5 +1,6 @@
 package com.chirex.bookwatcher
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -10,7 +11,7 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewEntries(navController: NavHostController, entries: List<BookEntry>) {
+fun ViewEntries(navController: NavHostController, entries: List<BookEntry>, onEdit: (Int) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -33,17 +34,24 @@ fun ViewEntries(navController: NavHostController, entries: List<BookEntry>) {
             if (entries.isEmpty()) {
                 Text("No entries available")
             } else {
-                entries.forEach { entry ->
-                    Text("Title: ${entry.title}")
-                    Text("Author: ${entry.author}")
-                    Text("Genre: ${entry.genre}")
-                    Text("Date Added: ${entry.added}")
-                    Text("Progress: ${entry.progress}")
-                    Text("Rating: ${entry.rating}")
-                    Spacer(modifier = Modifier.height(16.dp))
+                entries.forEachIndexed { index, entry ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onEdit(index) }
+                            .padding(8.dp)
+                    ) {
+                        Text("Title: ${entry.title}")
+                        Text("Author: ${entry.author}")
+                        Text("Genre: ${entry.genre}")
+                        Text("Date Added: ${entry.added}")
+                        Text("Progress: ${entry.progress}")
+                        Text("Rating: ${entry.rating}")
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
-            Button(onClick = { navController.navigate("MainMenu") }) {
+            Button(onClick = { navController.navigate(Screens.MenuScreen.route) }) {
                 Text("Back to Menu")
             }
         }

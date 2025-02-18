@@ -1,41 +1,42 @@
 package com.chirex.bookwatcher
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
-//@SuppressLint("RememberReturnType")
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
     val entries = remember { mutableStateListOf<BookEntry>() }
+    var selectedEntryIndex by remember { mutableStateOf(-1) }
 
     NavHost(
         navController = navController,
-        startDestination = "loginScreen"
+        startDestination = Screens.LogInScreenScreen.route
     ) {
-        composable("MainMenu") {
+        composable(Screens.MenuScreen.route) {
             Menu(navController)
         }
-        composable("addEntry") {
+        composable(Screens.AddEntryScreen.route) {
             AddEntry(navController, entries)
         }
-        composable("viewEntries") {
-            ViewEntries(navController, entries)
+        composable(Screens.ViewEntriesScreen.route) {
+            ViewEntries(navController, entries) { index ->
+                selectedEntryIndex = index
+                navController.navigate(Screens.EditEntryScreen.route)
+            }
         }
-        composable("editEntry") {
-            EditEntry(navController)
+        composable(Screens.EditEntryScreen.route) {
+            EditEntry(navController, entries, selectedEntryIndex)
         }
-        composable("deleteEntry") {
+        composable(Screens.DeleteEntryScreen.route) {
             DeleteEntry(navController)
         }
-        composable("loginScreen") {
+        composable(Screens.LogInScreenScreen.route) {
             LogInScreen(navController)
         }
-        composable("signupScreen") {
+        composable(Screens.SignUpScreenScreen.route) {
             SignUpScreen(navController)
         }
     }
