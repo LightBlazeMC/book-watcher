@@ -38,7 +38,6 @@ fun ViewEntries(navController: NavHostController, entries: List<BookEntry>, onEd
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onEdit(index) }
                             .padding(8.dp)
                     ) {
                         Text("Title: ${entry.title}")
@@ -47,6 +46,17 @@ fun ViewEntries(navController: NavHostController, entries: List<BookEntry>, onEd
                         Text("Date Added: ${entry.added}")
                         Text("Progress: ${entry.progress}")
                         Text("Rating: ${entry.rating}")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Button(onClick = { onEdit(index) }) {
+                                Text("Edit")
+                            }
+                            Button(onClick = { navController.navigate("deleteEntry/$index") }) {
+                                Text("Delete")
+                            }
+                        }
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }

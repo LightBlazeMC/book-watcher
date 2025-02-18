@@ -31,8 +31,9 @@ fun Navigation() {
         composable(Screens.EditEntryScreen.route) {
             EditEntry(navController, entries, selectedEntryIndex)
         }
-        composable(Screens.DeleteEntryScreen.route) {
-            DeleteEntry(navController)
+        composable("${Screens.DeleteEntryScreen.route}/{entryIndex}") { backStackEntry ->
+            val entryIndex = backStackEntry.arguments?.getString("entryIndex")?.toInt() ?: -1
+            DeleteEntry(navController, entries, entryIndex)
         }
         composable(Screens.LogInScreenScreen.route) {
             LogInScreen(navController) { enteredUsername ->

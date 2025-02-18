@@ -13,6 +13,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -21,6 +25,8 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Menu(navController: NavHostController, username: String) {
+    var entryIndex by remember { mutableStateOf(0) } // Define entryIndex variable
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,9 +55,9 @@ fun Menu(navController: NavHostController, username: String) {
             Button(onClick = { navController.navigate("editEntry") }) {
                 Text("Edit Entry")
             }
-            Button(onClick = { navController.navigate("deleteEntry") }) {
-                Text("Delete Entry")
-            }
+//            Button(onClick = { navController.navigate("deleteEntry/$entryIndex") }) { // Pass entryIndex correctly
+//                Text("Delete Entry")
+//            }
             Button(onClick = { navController.navigate("loginScreen") }) {
                 Text("Log out")
             }
