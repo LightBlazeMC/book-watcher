@@ -1,48 +1,34 @@
 package com.chirex.bookwatcher
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+
+data class BookEntry(
+    val title: String,
+    val author: String,
+    val genre: String,
+    val added: String,
+    val progress: String,
+    val rating: String
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEntry(navController: NavHostController) {
+fun AddEntry(navController: NavHostController, entries: MutableList<BookEntry>) {
+    var title by remember { mutableStateOf("") }
+    var author by remember { mutableStateOf("") }
+    var genre by remember { mutableStateOf("") }
+    var added by remember { mutableStateOf("") }
+    var progress by remember { mutableStateOf("") }
+    var rating by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -62,8 +48,56 @@ fun AddEntry(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Add Entry Screen")
-            Button(onClick = { navController.navigate("MainMenu") }) {
+            TextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Title") },
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            )
+            TextField(
+                value = author,
+                onValueChange = { author = it },
+                label = { Text("Author") },
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            )
+            TextField(
+                value = genre,
+                onValueChange = { genre = it },
+                label = { Text("Genre") },
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            )
+            TextField(
+                value = added,
+                onValueChange = { added = it },
+                label = { Text("Date Added") },
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            )
+            TextField(
+                value = progress,
+                onValueChange = { progress = it },
+                label = { Text("Progress") },
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            )
+            TextField(
+                value = rating,
+                onValueChange = { rating = it },
+                label = { Text("Rating") },
+                modifier = Modifier.fillMaxWidth().padding(8.dp)
+            )
+            Button(
+                onClick = {
+                    val newEntry = BookEntry(title, author, genre, added, progress, rating)
+                    entries.add(newEntry)
+                    navController.navigate("MainMenu")
+                },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text("Submit")
+            }
+            Button(
+                onClick = { navController.navigate("MainMenu") },
+                modifier = Modifier.padding(8.dp)
+            ) {
                 Text("Back to Menu")
             }
         }

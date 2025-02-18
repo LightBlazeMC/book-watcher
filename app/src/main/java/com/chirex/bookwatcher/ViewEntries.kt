@@ -1,48 +1,16 @@
 package com.chirex.bookwatcher
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewEntries(navController: NavHostController) {
+fun ViewEntries(navController: NavHostController, entries: List<BookEntry>) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -62,7 +30,19 @@ fun ViewEntries(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("View Entries Screen")
+            if (entries.isEmpty()) {
+                Text("No entries available")
+            } else {
+                entries.forEach { entry ->
+                    Text("Title: ${entry.title}")
+                    Text("Author: ${entry.author}")
+                    Text("Genre: ${entry.genre}")
+                    Text("Date Added: ${entry.added}")
+                    Text("Progress: ${entry.progress}")
+                    Text("Rating: ${entry.rating}")
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
             Button(onClick = { navController.navigate("MainMenu") }) {
                 Text("Back to Menu")
             }
