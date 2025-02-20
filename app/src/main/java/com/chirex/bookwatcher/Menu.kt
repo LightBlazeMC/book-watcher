@@ -46,18 +46,12 @@ fun Menu(navController: NavHostController, username: String) {
             verticalArrangement = Arrangement.Center
         ) {
             Text("Hello, $username!", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(bottom = 72.dp))
-            Button(onClick = { navController.navigate("addEntry") }) {
+            Button(onClick = { navController.navigate("addBookScreen") }) {
                 Text("Add Entry")
             }
-            Button(onClick = { navController.navigate("viewEntries") }) {
+            Button(onClick = { navController.navigate("listBookScreen") }) {
                 Text("View Entries")
             }
-            Button(onClick = { navController.navigate("editEntry") }) {
-                Text("Edit Entry")
-            }
-//            Button(onClick = { navController.navigate("deleteEntry/$entryIndex") }) { // Pass entryIndex correctly
-//                Text("Delete Entry")
-//            }
             Button(onClick = { navController.navigate("loginScreen") }) {
                 Text("Log out")
             }
