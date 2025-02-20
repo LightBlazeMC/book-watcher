@@ -1,6 +1,7 @@
 package com.chirex.bookwatcher
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,13 +21,10 @@ fun Navigation() {
             Menu(navController, username)
         }
         composable(Screens.AddEntryScreen.route) {
-            AddEntry(navController, entries)
+            AddEntry(navController, LocalContext.current)
         }
         composable(Screens.ViewEntriesScreen.route) {
-            ViewEntries(navController, entries) { index ->
-                selectedEntryIndex = index
-                navController.navigate(Screens.EditEntryScreen.route)
-            }
+            ViewEntries(navController, LocalContext.current)
         }
         composable(Screens.EditEntryScreen.route) {
             EditEntry(navController, entries, selectedEntryIndex)

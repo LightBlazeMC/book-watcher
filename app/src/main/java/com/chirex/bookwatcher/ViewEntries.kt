@@ -1,9 +1,12 @@
 package com.chirex.bookwatcher
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -11,7 +14,9 @@ import androidx.navigation.NavHostController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewEntries(navController: NavHostController, entries: List<BookEntry>, onEdit: (Int) -> Unit) {
+fun ViewEntries(navController: NavHostController, context: Context) {
+    val entries by BookEntryDataStore.getEntries(context).collectAsState(initial = emptyList())
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,7 +55,7 @@ fun ViewEntries(navController: NavHostController, entries: List<BookEntry>, onEd
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Button(onClick = { onEdit(index) }) {
+                            Button(onClick = { /* Handle edit */ }) {
                                 Text("Edit")
                             }
                             Button(onClick = { navController.navigate("deleteEntry/$index") }) {

@@ -1,5 +1,6 @@
 package com.chirex.bookwatcher
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -8,7 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
+
+private val Context.dataStore by preferencesDataStore(name = "book_entries")
 
 data class BookEntry(
     val title: String,
@@ -21,13 +26,15 @@ data class BookEntry(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEntry(navController: NavHostController, entries: MutableList<BookEntry>) {
+fun AddEntry(navController: NavHostController, context: Context) {
     var title by remember { mutableStateOf("") }
     var author by remember { mutableStateOf("") }
     var genre by remember { mutableStateOf("") }
     var added by remember { mutableStateOf("") }
     var progress by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf("") }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -87,8 +94,11 @@ fun AddEntry(navController: NavHostController, entries: MutableList<BookEntry>) 
             Button(
                 onClick = {
                     val newEntry = BookEntry(title, author, genre, added, progress, rating)
-                    entries.add(newEntry)
-                    navController.navigate("MainMenu")
+                    // Save entry to DataStore
+                    coroutineScope.launch {
+                        BookEntryDataStore.saveEntry(context, newEntry)
+                        navController.navigate("MainMenu")
+                    }
                 },
                 modifier = Modifier.padding(8.dp)
             ) {
