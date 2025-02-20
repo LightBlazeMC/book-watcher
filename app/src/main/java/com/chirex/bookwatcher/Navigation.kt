@@ -1,5 +1,6 @@
 package com.chirex.bookwatcher
 
+import DeleteEntry
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
@@ -30,8 +31,7 @@ fun Navigation() {
             EditEntry(navController, entries, selectedEntryIndex)
         }
         composable("${Screens.DeleteEntryScreen.route}/{entryIndex}") { backStackEntry ->
-            val entryIndex = backStackEntry.arguments?.getString("entryIndex")?.toInt() ?: -1
-            DeleteEntry(navController, entries, entryIndex)
+            DeleteEntry(navController, LocalContext.current)
         }
         composable(Screens.LogInScreenScreen.route) {
             LogInScreen(navController) { enteredUsername ->

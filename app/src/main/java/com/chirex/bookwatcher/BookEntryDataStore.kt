@@ -42,4 +42,10 @@ object BookEntryDataStore {
             )
         }
     }
+
+    suspend fun deleteEntry(context: Context) {
+        context.dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
 }
