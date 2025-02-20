@@ -25,6 +25,10 @@ import com.chirex.bookwatcher.ui.theme.BookWatcherTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val db = DatabaseInstance.getDatabase(applicationContext)
+        val booksDao = db.booksDao()
+
         setContent {
             BookWatcherTheme {
                 Surface(
