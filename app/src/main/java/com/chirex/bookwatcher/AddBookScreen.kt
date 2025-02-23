@@ -1,18 +1,22 @@
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
-import com.chirex.bookwatcher.BooksDao
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
 import com.chirex.bookwatcher.Books
+import com.chirex.bookwatcher.BooksDao
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
@@ -26,6 +30,9 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
     var snackbarMessage by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val genres = listOf("Fiction", "Non Fiction", "Fantasy/Adventure/Sci-Fi", "Horror/Thriller/Crime", "Biography/History", "Poetry/Screen", "Other")
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -51,12 +58,35 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
                 modifier = Modifier.fillMaxWidth()
             )
 
-            TextField(
-                value = genre,
-                onValueChange = { genre = it },
-                label = { Text("Enter Book Genre") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                TextField(
+                    value = genre,
+                    onValueChange = { genre = it },
+                    label = { Text("Select Book Genre") },
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    genres.forEach { selectedGenre ->
+                        DropdownMenuItem(
+                            text = { Text(selectedGenre) },
+                            onClick = {
+                                genre = selectedGenre
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
             TextField(
                 value = added,

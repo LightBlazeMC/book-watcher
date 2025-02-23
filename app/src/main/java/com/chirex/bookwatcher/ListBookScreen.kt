@@ -16,6 +16,7 @@ import com.chirex.bookwatcher.Books
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifier: Modifier = Modifier) {
     val books = remember { mutableStateListOf<Books>() }
@@ -86,6 +87,8 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
             var editedAdded by remember { mutableStateOf(bookToEdit!!.added) }
             var editedProgress by remember { mutableStateOf(bookToEdit!!.progress) }
             var editedRating by remember { mutableStateOf(bookToEdit!!.rating) }
+            val genres = listOf("Fiction", "Non Fiction", "Fantasy/Adventure/Sci-Fi", "Horror/Thriller/Crime", "Biography/History", "Poetry/Screen", "Other")
+            var expanded by remember { mutableStateOf(false) }
 
             AlertDialog(
                 onDismissRequest = { bookToEdit = null },
@@ -102,11 +105,35 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
                             onValueChange = { editedAuthor = it },
                             label = { Text("Author") }
                         )
-                        TextField(
-                            value = editedGenre,
-                            onValueChange = { editedGenre = it },
-                            label = { Text("Genre") }
-                        )
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded }
+                        ) {
+                            TextField(
+                                value = editedGenre,
+                                onValueChange = { editedGenre = it },
+                                label = { Text("Genre") },
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                                modifier = Modifier
+                                    .menuAnchor()
+                                    .fillMaxWidth()
+                            )
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                genres.forEach { selectedGenre ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectedGenre) },
+                                        onClick = {
+                                            editedGenre = selectedGenre
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
                         TextField(
                             value = editedAdded,
                             onValueChange = { editedAdded = it },
