@@ -10,11 +10,15 @@ import androidx.navigation.NavHostController
 import com.chirex.bookwatcher.Books
 import com.chirex.bookwatcher.BooksDao
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 @Composable
 fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifier: Modifier = Modifier) {
     val books = remember { mutableStateListOf<Books>() }
     val coroutineScope = rememberCoroutineScope()
+    var bookToDelete by remember { mutableStateOf<Books?>(null) }
+    var showSnackbar by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         books.addAll(booksDao.getAllBooks())
@@ -24,22 +28,58 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
         coroutineScope.launch {
             booksDao.deleteBook(book.title)
             books.remove(book)
+            showSnackbar = true
         }
     }
 
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxSize()
-    ) {
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(books) { book ->
-                BooksCard(book = book, onDelete = { deleteBook(it) })
-                HorizontalDivider()
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(16.dp)
+                .fillMaxSize()
+        ) {
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(books) { book ->
+                    BooksCard(book = book, onDelete = { bookToDelete = it })
+                    HorizontalDivider()
+                }
+            }
+            Button(onClick = { navController.navigate("menuScreen") }) {
+                Text("Return to menu")
             }
         }
-        Button(onClick = { navController.navigate("menuScreen") }) {
-            Text("Return to menu")
+
+        if (bookToDelete != null) {
+            AlertDialog(
+                onDismissRequest = { bookToDelete = null },
+                title = { Text("Confirm Deletion") },
+                text = { Text("Are you sure you want to delete the book \"${bookToDelete?.title}\"?") },
+                confirmButton = {
+                    Button(onClick = {
+                        bookToDelete?.let { deleteBook(it) }
+                        bookToDelete = null
+                    }) {
+                        Text("Yes, Delete")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { bookToDelete = null }) {
+                        Text("No, Cancel")
+                    }
+                }
+            )
+        }
+
+        if (showSnackbar) {
+            LaunchedEffect(Unit) {
+                snackbarHostState.showSnackbar("Book deleted successfully.")
+                delay(3000) // Dismiss after 3 seconds
+                showSnackbar = false
+            }
         }
     }
 }
