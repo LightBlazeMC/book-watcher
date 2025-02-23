@@ -25,6 +25,9 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
     var bookToEdit by remember { mutableStateOf<Books?>(null) }
     var showSnackbar by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+    var selectedGenre by remember { mutableStateOf("All") }
+    val genres = listOf("All", "Fiction", "Non Fiction", "Fantasy/Adventure/Sci-Fi", "Horror/Thriller/Crime", "Biography/History", "Poetry/Screen", "Other")
+    var expanded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         books.addAll(booksDao.getAllBooks())
@@ -38,6 +41,8 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
         }
     }
 
+    val filteredBooks = if (selectedGenre == "All") books else books.filter { it.genre == selectedGenre }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -48,8 +53,38 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                TextField(
+                    value = selectedGenre,
+                    onValueChange = { selectedGenre = it },
+                    label = { Text("Select Genre") },
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    genres.forEach { genre ->
+                        DropdownMenuItem(
+                            text = { Text(genre) },
+                            onClick = {
+                                selectedGenre = genre
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(books) { book ->
+                items(filteredBooks) { book ->
                     BooksCard(book = book, onDelete = { bookToDelete = it }, onEdit = { bookToEdit = it })
                     HorizontalDivider()
                 }
