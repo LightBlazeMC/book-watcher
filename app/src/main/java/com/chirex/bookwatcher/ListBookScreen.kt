@@ -94,6 +94,10 @@ fun BooksCard(book: Books, onDelete: (Books) -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = book.title, style = MaterialTheme.typography.labelSmall)
             Text(text = book.author, style = MaterialTheme.typography.labelSmall)
+            Text(text = book.genre, style = MaterialTheme.typography.labelSmall)
+            Text(text = book.added, style = MaterialTheme.typography.labelSmall)
+            Text(text = book.progress, style = MaterialTheme.typography.labelSmall)
+            Text(text = book.rating, style = MaterialTheme.typography.labelSmall)
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = { onDelete(book) }) {
                 Text("Delete")

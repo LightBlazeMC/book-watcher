@@ -23,6 +23,7 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
     var progress by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf("") }
     var showSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -99,14 +100,20 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
                         Button(onClick = {
                             coroutineScope.launch {
                                 if (title.isNotBlank()) {
-                                    val book = Books(title = title, author = author, genre = genre, added = added, progress = progress, rating = rating)
-                                    booksDao.insertBook(book)
-                                    title = ""
-                                    author = ""
-                                    genre = ""
-                                    added = ""
-                                    progress = ""
-                                    rating = ""
+                                    val existingBook = booksDao.getBookByTitle(title)
+                                    if (existingBook != null) {
+                                        snackbarMessage = "This book already exists."
+                                    } else {
+                                        val book = Books(title = title, author = author, genre = genre, added = added, progress = progress, rating = rating)
+                                        booksDao.insertBook(book)
+                                        title = ""
+                                        author = ""
+                                        genre = ""
+                                        added = ""
+                                        progress = ""
+                                        rating = ""
+                                        snackbarMessage = "Book added successfully."
+                                    }
                                     showSnackbar = true
                                 }
                             }
@@ -125,7 +132,7 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
 
             if (showSnackbar) {
                 LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar("Book added successfully.")
+                    snackbarHostState.showSnackbar(snackbarMessage)
                     delay(3000) // Dismiss after 3 seconds
                     showSnackbar = false
                 }
