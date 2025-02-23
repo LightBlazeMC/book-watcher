@@ -18,14 +18,15 @@ fun Navigation(booksDao: BooksDao) {
     ) {
         composable("loginScreen") {
             LogInScreen(navController) { enteredUsername: String ->
-                navController.navigate("menuScreen")
+                navController.navigate("menuScreen/$enteredUsername")
             }
         }
         composable("signUpScreen") {
             SignUpScreen(navController)
         }
-        composable("menuScreen") {
-            Menu(navController, "User")
+        composable("menuScreen/{username}") { backStackEntry ->
+            val username = backStackEntry.arguments?.getString("username") ?: "User"
+            Menu(navController, username)
         }
         composable("listBookScreen") {
             ListBookScreen(navController = navController, booksDao = booksDao)
