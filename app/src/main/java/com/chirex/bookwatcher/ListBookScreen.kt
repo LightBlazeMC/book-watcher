@@ -1,22 +1,27 @@
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import com.chirex.bookwatcher.BooksDao
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.chirex.bookwatcher.Books
-import com.chirex.bookwatcher.BooksDao
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifier: Modifier = Modifier) {
     val books = remember { mutableStateListOf<Books>() }
     val coroutineScope = rememberCoroutineScope()
     var bookToDelete by remember { mutableStateOf<Books?>(null) }
+    var bookToEdit by remember { mutableStateOf<Books?>(null) }
     var showSnackbar by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -44,7 +49,7 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
         ) {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(books) { book ->
-                    BooksCard(book = book, onDelete = { bookToDelete = it })
+                    BooksCard(book = book, onDelete = { bookToDelete = it }, onEdit = { bookToEdit = it })
                     HorizontalDivider()
                 }
             }
@@ -74,6 +79,78 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
             )
         }
 
+        if (bookToEdit != null) {
+            var editedTitle by remember { mutableStateOf(bookToEdit!!.title) }
+            var editedAuthor by remember { mutableStateOf(bookToEdit!!.author) }
+            var editedGenre by remember { mutableStateOf(bookToEdit!!.genre) }
+            var editedAdded by remember { mutableStateOf(bookToEdit!!.added) }
+            var editedProgress by remember { mutableStateOf(bookToEdit!!.progress) }
+            var editedRating by remember { mutableStateOf(bookToEdit!!.rating) }
+
+            AlertDialog(
+                onDismissRequest = { bookToEdit = null },
+                title = { Text("Edit Book") },
+                text = {
+                    Column {
+                        TextField(
+                            value = editedTitle,
+                            onValueChange = { editedTitle = it },
+                            label = { Text("Title") }
+                        )
+                        TextField(
+                            value = editedAuthor,
+                            onValueChange = { editedAuthor = it },
+                            label = { Text("Author") }
+                        )
+                        TextField(
+                            value = editedGenre,
+                            onValueChange = { editedGenre = it },
+                            label = { Text("Genre") }
+                        )
+                        TextField(
+                            value = editedAdded,
+                            onValueChange = { editedAdded = it },
+                            label = { Text("Added") }
+                        )
+                        TextField(
+                            value = editedProgress,
+                            onValueChange = { editedProgress = it },
+                            label = { Text("Progress") }
+                        )
+                        TextField(
+                            value = editedRating,
+                            onValueChange = { editedRating = it },
+                            label = { Text("Rating") }
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        coroutineScope.launch {
+                            val updatedBook = bookToEdit!!.copy(
+                                title = editedTitle,
+                                author = editedAuthor,
+                                genre = editedGenre,
+                                added = editedAdded,
+                                progress = editedProgress,
+                                rating = editedRating
+                            )
+                            booksDao.insertBook(updatedBook)
+                            books[books.indexOfFirst { it.title == bookToEdit!!.title }] = updatedBook
+                            bookToEdit = null
+                        }
+                    }) {
+                        Text("Save")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { bookToEdit = null }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
         if (showSnackbar) {
             LaunchedEffect(Unit) {
                 snackbarHostState.showSnackbar("Book deleted successfully.")
@@ -85,7 +162,7 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
 }
 
 @Composable
-fun BooksCard(book: Books, onDelete: (Books) -> Unit) {
+fun BooksCard(book: Books, onDelete: (Books) -> Unit, onEdit: ((Books) -> Unit)? = null) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -99,8 +176,16 @@ fun BooksCard(book: Books, onDelete: (Books) -> Unit) {
             Text(text = book.progress, style = MaterialTheme.typography.labelSmall)
             Text(text = book.rating, style = MaterialTheme.typography.labelSmall)
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { onDelete(book) }) {
-                Text("Delete")
+            Row {
+                onEdit?.let {
+                    Button(onClick = { it(book) }) {
+                        Text("Edit")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Button(onClick = { onDelete(book) }) {
+                    Text("Delete")
+                }
             }
         }
     }
