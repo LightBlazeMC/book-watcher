@@ -14,9 +14,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifier: Modifier = Modifier) {
     val books = remember { mutableStateListOf<Books>() }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         books.addAll(booksDao.getAllBooks())
+    }
+
+    fun deleteBook(book: Books) {
+        coroutineScope.launch {
+            booksDao.deleteBook(book.title)
+            books.remove(book)
+        }
     }
 
     Column(
@@ -26,7 +34,7 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
     ) {
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(books) { book ->
-                BooksCard(book = book)
+                BooksCard(book = book, onDelete = { deleteBook(it) })
                 HorizontalDivider()
             }
         }
@@ -37,7 +45,7 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
 }
 
 @Composable
-fun BooksCard(book: Books) {
+fun BooksCard(book: Books, onDelete: (Books) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,6 +54,10 @@ fun BooksCard(book: Books) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = book.title, style = MaterialTheme.typography.labelSmall)
             Text(text = book.author, style = MaterialTheme.typography.labelSmall)
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { onDelete(book) }) {
+                Text("Delete")
+            }
         }
     }
 }
