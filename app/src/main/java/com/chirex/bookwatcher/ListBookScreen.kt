@@ -268,12 +268,12 @@ fun BooksCard(book: Books, onDelete: (Books) -> Unit, onEdit: ((Books) -> Unit)?
             .padding(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = book.title, style = MaterialTheme.typography.labelSmall)
-            Text(text = book.author, style = MaterialTheme.typography.labelSmall)
-            Text(text = book.genre, style = MaterialTheme.typography.labelSmall)
-            Text(text = book.added, style = MaterialTheme.typography.labelSmall)
-            Text(text = book.progress, style = MaterialTheme.typography.labelSmall)
-            Text(text = book.rating, style = MaterialTheme.typography.labelSmall)
+            Text(text = "Title: ${book.title}", style = MaterialTheme.typography.labelSmall)
+            Text(text = "Author: ${book.author}", style = MaterialTheme.typography.labelSmall)
+            Text(text = "Genre: ${book.genre}", style = MaterialTheme.typography.labelSmall)
+            Text(text = "Date added: ${book.added}", style = MaterialTheme.typography.labelSmall)
+            Text(text = "Progress: ${book.progress}", style = MaterialTheme.typography.labelSmall)
+            Text(text = "Rating: ${book.rating}/5", style = MaterialTheme.typography.labelSmall)
             Spacer(modifier = Modifier.height(8.dp))
             Row {
                 onEdit?.let {
