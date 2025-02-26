@@ -38,6 +38,10 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
 
     val showDatePicker = remember { mutableStateOf(false) }
 
+    fun isValidInput(): Boolean {
+        return title.isNotBlank() && author.isNotBlank() && genre.isNotBlank() && added != null && progress.isNotBlank() && rating.isNotBlank()
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -93,10 +97,10 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Added Date: ${added?.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")) ?: "None"}")
+                Text("Due Date: ${added?.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")) ?: "None"}")
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(onClick = { showDatePicker.value = true }) {
-                    Text("Pick Date")
+                    Text("Pick Due Date")
                 }
             }
             if (showDatePicker.value) {
@@ -143,7 +147,14 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = { showDialog = true },
+                onClick = {
+                    if (isValidInput()) {
+                        showDialog = true
+                    } else {
+                        snackbarMessage = "Please fill in all fields."
+                        showSnackbar = true
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Add Book")
@@ -165,7 +176,7 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
                                     if (existingBook != null) {
                                         snackbarMessage = "This book already exists."
                                     } else {
-                                        val book = Books(title = title, author = author, genre = genre, added = added.toString(), progress = progress, rating = rating)
+                                        val book = Books(title = title, author = author, genre = genre, added = added?.toString() ?: "", progress = progress, rating = rating)
                                         booksDao.insertBook(book)
                                         title = ""
                                         author = ""

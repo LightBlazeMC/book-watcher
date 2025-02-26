@@ -271,7 +271,7 @@ fun BooksCard(book: Books, onDelete: (Books) -> Unit, onEdit: ((Books) -> Unit)?
             Text(text = "Title: ${book.title}", style = MaterialTheme.typography.labelSmall)
             Text(text = "Author: ${book.author}", style = MaterialTheme.typography.labelSmall)
             Text(text = "Genre: ${book.genre}", style = MaterialTheme.typography.labelSmall)
-            Text(text = "Date added: ${book.added}", style = MaterialTheme.typography.labelSmall)
+            Text(text = "Due Date: ${book.added}", style = MaterialTheme.typography.labelSmall)
             Text(text = "Progress: ${book.progress}", style = MaterialTheme.typography.labelSmall)
             Text(text = "Rating: ${book.rating}/5", style = MaterialTheme.typography.labelSmall)
             Spacer(modifier = Modifier.height(8.dp))
