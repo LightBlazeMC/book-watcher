@@ -46,6 +46,10 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
         }
     }
 
+    fun isValidInput(title: String, author: String, genre: String, added: LocalDate?, progress: String, rating: String): Boolean {
+        return title.isNotBlank() && author.isNotBlank() && genre.isNotBlank() && added != null && progress.isNotBlank() && rating.isNotBlank()
+    }
+
     val filteredBooks = if (selectedGenre == "All") books else books.filter { it.genre == selectedGenre }
 
     Scaffold(
@@ -132,6 +136,7 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
             var expandedGenre by remember { mutableStateOf(false) }
             var expandedRating by remember { mutableStateOf(false) }
             val showDatePicker = remember { mutableStateOf(false) }
+            var showEditSnackbar by remember { mutableStateOf(false) }
 
             AlertDialog(
                 onDismissRequest = { bookToEdit = null },
@@ -225,18 +230,23 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
                 },
                 confirmButton = {
                     Button(onClick = {
-                        coroutineScope.launch {
-                            val updatedBook = bookToEdit!!.copy(
-                                title = editedTitle,
-                                author = editedAuthor,
-                                genre = editedGenre,
-                                added = editedAdded.toString(),
-                                progress = editedProgress,
-                                rating = editedRating
-                            )
-                            booksDao.insertBook(updatedBook)
-                            books[books.indexOfFirst { it.title == bookToEdit!!.title }] = updatedBook
-                            bookToEdit = null
+                        if (isValidInput(editedTitle, editedAuthor, editedGenre, editedAdded, editedProgress, editedRating)) {
+                            coroutineScope.launch {
+                                val updatedBook = bookToEdit!!.copy(
+                                    title = editedTitle,
+                                    author = editedAuthor,
+                                    genre = editedGenre,
+                                    added = editedAdded.toString(),
+                                    progress = editedProgress,
+                                    rating = editedRating
+                                )
+                                booksDao.insertBook(updatedBook)
+                                books[books.indexOfFirst { it.title == bookToEdit!!.title }] = updatedBook
+                                bookToEdit = null
+                                showEditSnackbar = true
+                            }
+                        } else {
+                            showEditSnackbar = true
                         }
                     }) {
                         Text("Save")
@@ -248,6 +258,14 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
                     }
                 }
             )
+
+            if (showEditSnackbar) {
+                LaunchedEffect(Unit) {
+                    snackbarHostState.showSnackbar("Please fill in all fields.")
+                    delay(3000) // Dismiss after 3 seconds
+                    showEditSnackbar = false
+                }
+            }
         }
 
         if (showSnackbar) {
