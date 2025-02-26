@@ -123,7 +123,9 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
             var editedProgress by remember { mutableStateOf(bookToEdit!!.progress) }
             var editedRating by remember { mutableStateOf(bookToEdit!!.rating) }
             val genres = listOf("Fiction", "Non Fiction", "Fantasy/Adventure/Sci-Fi", "Horror/Thriller/Crime", "Biography/History", "Poetry/Screen", "Other")
-            var expanded by remember { mutableStateOf(false) }
+            val ratings = listOf("0", "1", "2", "3", "4", "5")
+            var expandedGenre by remember { mutableStateOf(false) }
+            var expandedRating by remember { mutableStateOf(false) }
 
             AlertDialog(
                 onDismissRequest = { bookToEdit = null },
@@ -141,29 +143,29 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
                             label = { Text("Author") }
                         )
                         ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = { expanded = !expanded }
+                            expanded = expandedGenre,
+                            onExpandedChange = { expandedGenre = !expandedGenre }
                         ) {
                             TextField(
                                 value = editedGenre,
                                 onValueChange = { editedGenre = it },
                                 label = { Text("Genre") },
                                 readOnly = true,
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedGenre) },
                                 modifier = Modifier
                                     .menuAnchor()
                                     .fillMaxWidth()
                             )
                             ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false }
+                                expanded = expandedGenre,
+                                onDismissRequest = { expandedGenre = false }
                             ) {
                                 genres.forEach { selectedGenre ->
                                     DropdownMenuItem(
                                         text = { Text(selectedGenre) },
                                         onClick = {
                                             editedGenre = selectedGenre
-                                            expanded = false
+                                            expandedGenre = false
                                         }
                                     )
                                 }
@@ -179,11 +181,35 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
                             onValueChange = { editedProgress = it },
                             label = { Text("Progress") }
                         )
-                        TextField(
-                            value = editedRating,
-                            onValueChange = { editedRating = it },
-                            label = { Text("Rating") }
-                        )
+                        ExposedDropdownMenuBox(
+                            expanded = expandedRating,
+                            onExpandedChange = { expandedRating = !expandedRating }
+                        ) {
+                            TextField(
+                                value = editedRating,
+                                onValueChange = { editedRating = it },
+                                label = { Text("Rating") },
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRating) },
+                                modifier = Modifier
+                                    .menuAnchor()
+                                    .fillMaxWidth()
+                            )
+                            ExposedDropdownMenu(
+                                expanded = expandedRating,
+                                onDismissRequest = { expandedRating = false }
+                            ) {
+                                ratings.forEach { selectedRating ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectedRating) },
+                                        onClick = {
+                                            editedRating = selectedRating
+                                            expandedRating = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 },
                 confirmButton = {

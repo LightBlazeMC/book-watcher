@@ -32,7 +32,9 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
     val snackbarHostState = remember { SnackbarHostState() }
 
     val genres = listOf("Fiction", "Non Fiction", "Fantasy/Adventure/Sci-Fi", "Horror/Thriller/Crime", "Biography/History", "Poetry/Screen", "Other")
-    var expanded by remember { mutableStateOf(false) }
+    val ratings = listOf("0", "1", "2", "3", "4", "5")
+    var expandedGenre by remember { mutableStateOf(false) }
+    var expandedRating by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -59,29 +61,29 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
             )
 
             ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
+                expanded = expandedGenre,
+                onExpandedChange = { expandedGenre = !expandedGenre }
             ) {
                 TextField(
                     value = genre,
                     onValueChange = { genre = it },
                     label = { Text("Select Book Genre") },
                     readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedGenre) },
                     modifier = Modifier
                         .menuAnchor()
                         .fillMaxWidth()
                 )
                 ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    expanded = expandedGenre,
+                    onDismissRequest = { expandedGenre = false }
                 ) {
                     genres.forEach { selectedGenre ->
                         DropdownMenuItem(
                             text = { Text(selectedGenre) },
                             onClick = {
                                 genre = selectedGenre
-                                expanded = false
+                                expandedGenre = false
                             }
                         )
                     }
@@ -102,12 +104,35 @@ fun AddBookScreen(booksDao: BooksDao, modifier: Modifier = Modifier, navControll
                 modifier = Modifier.fillMaxWidth()
             )
 
-            TextField(
-                value = rating,
-                onValueChange = { rating = it },
-                label = { Text("Enter Book Rating") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            ExposedDropdownMenuBox(
+                expanded = expandedRating,
+                onExpandedChange = { expandedRating = !expandedRating }
+            ) {
+                TextField(
+                    value = rating,
+                    onValueChange = { rating = it },
+                    label = { Text("Select Book Rating") },
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRating) },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedRating,
+                    onDismissRequest = { expandedRating = false }
+                ) {
+                    ratings.forEach { selectedRating ->
+                        DropdownMenuItem(
+                            text = { Text(selectedRating) },
+                            onClick = {
+                                rating = selectedRating
+                                expandedRating = false
+                            }
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 

@@ -45,7 +45,7 @@ fun Menu(navController: NavHostController, username: String) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("Hello, $username!", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(bottom = 72.dp))
+            Text("Hello, what would you like to do?", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(bottom = 72.dp))
             Button(onClick = { navController.navigate("addBookScreen") }) {
                 Text("Add Entry")
             }
