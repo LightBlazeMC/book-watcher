@@ -10,11 +10,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.chirex.bookwatcher.Books
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -119,13 +124,14 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
             var editedTitle by remember { mutableStateOf(bookToEdit!!.title) }
             var editedAuthor by remember { mutableStateOf(bookToEdit!!.author) }
             var editedGenre by remember { mutableStateOf(bookToEdit!!.genre) }
-            var editedAdded by remember { mutableStateOf(bookToEdit!!.added) }
+            var editedAdded by remember { mutableStateOf<LocalDate?>(LocalDate.parse(bookToEdit!!.added)) }
             var editedProgress by remember { mutableStateOf(bookToEdit!!.progress) }
             var editedRating by remember { mutableStateOf(bookToEdit!!.rating) }
             val genres = listOf("Fiction", "Non Fiction", "Fantasy/Adventure/Sci-Fi", "Horror/Thriller/Crime", "Biography/History", "Poetry/Screen", "Other")
             val ratings = listOf("0", "1", "2", "3", "4", "5")
             var expandedGenre by remember { mutableStateOf(false) }
             var expandedRating by remember { mutableStateOf(false) }
+            val showDatePicker = remember { mutableStateOf(false) }
 
             AlertDialog(
                 onDismissRequest = { bookToEdit = null },
@@ -171,11 +177,16 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
                                 }
                             }
                         }
-                        TextField(
-                            value = editedAdded,
-                            onValueChange = { editedAdded = it },
-                            label = { Text("Added") }
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("Added Date: ${editedAdded?.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")) ?: "None"}")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(onClick = { showDatePicker.value = true }) {
+                                Text("Pick Date")
+                            }
+                        }
+                        if (showDatePicker.value) {
+                            ShowCalendar { editedAdded = it; showDatePicker.value = false }
+                        }
                         TextField(
                             value = editedProgress,
                             onValueChange = { editedProgress = it },
@@ -219,7 +230,7 @@ fun ListBookScreen(navController: NavHostController, booksDao: BooksDao, modifie
                                 title = editedTitle,
                                 author = editedAuthor,
                                 genre = editedGenre,
-                                added = editedAdded,
+                                added = editedAdded.toString(),
                                 progress = editedProgress,
                                 rating = editedRating
                             )
