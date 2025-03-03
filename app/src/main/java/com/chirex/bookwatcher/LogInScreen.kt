@@ -175,7 +175,7 @@ fun LogInScreen(navController: NavHostController, onLoginSuccess: (String) -> Un
                 }
 
                 TextButton(
-                    onClick = { /*TODO*/ },
+                    onClick = {},
                     modifier = Modifier.constrainAs(forgotPassword) {
                         top.linkTo(loginButton.bottom, margin = 16.dp)
                         centerHorizontallyTo(parent)
