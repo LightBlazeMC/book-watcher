@@ -6,7 +6,6 @@ import com.chirex.bookwatcher.BooksDao
 import com.chirex.bookwatcher.LogInScreen
 import com.chirex.bookwatcher.Menu
 import com.chirex.bookwatcher.SignUpScreen
-import com.chirex.bookwatcher.ui.*
 
 @Composable
 fun Navigation(booksDao: BooksDao) {
@@ -17,7 +16,7 @@ fun Navigation(booksDao: BooksDao) {
         startDestination = "loginScreen"
     ) {
         composable("loginScreen") {
-            LogInScreen(navController) { enteredUsername: String ->
+            LogInScreen(navController) {
                 navController.navigate("menuScreen")
             }
         }
@@ -25,7 +24,7 @@ fun Navigation(booksDao: BooksDao) {
             SignUpScreen(navController)
         }
         composable("menuScreen") {
-            Menu(navController, "User")
+            Menu(navController)
         }
         composable("listBookScreen") {
             ListBookScreen(navController = navController, booksDao = booksDao)
